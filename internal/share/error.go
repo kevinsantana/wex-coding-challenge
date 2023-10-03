@@ -6,9 +6,18 @@ import (
 	"strings"
 )
 
+
+// internal infra errors
 var (
+	// database
+	ErrUpdateNoneOrMany = errors.New("error in quantity of rows affected")
+	ErrDatabase         = errors.New("error database")
+	ErrDuplicate        = errors.New("error duplicate")
+	// rest
+	ErrTimeout = errors.New("error timeout")
 	ErrContentType = errors.New("content-type error")
 )
+
 
 type DomainError struct {
 	Domain      string

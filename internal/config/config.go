@@ -2,30 +2,44 @@ package config
 
 import (
 	"context"
+	"time"
 
-	"github.com/kelseyhightower/envconfig"
 	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 )
 
-type Config struct {
-	Host               string `envconfig:"HOST" default:"127.0.0.1"`
-	Port               string `envconfig:"PORT" default:"3060"`
-	ApplicationVersion string
+type Server struct {
+	Host            string        `envconfig:"HOST" default:"127.0.0.1"`
+	Port            string        `envconfig:"PORT" default:"3060"`
+	ShutdownTimeout time.Duration `envconfig:"SHUTDOWN_TIMEOUT" default:"10s"`
 }
 
-var Configuration Config
+type Database struct {
+	ConnMaxLifetime time.Duration `envconfig:"DATABASE_CONNMAXLIFETIME" default:"5m"`
+	MaxOpenConns    int           `envconfig:"DATABASE_MAXOPENCONNS" default:"25"`
+	MaxIdleConns    int           `envconfig:"DATABASE_MAXIDLECONNS" default:"25"`
+	Host            string        `envconfig:"DATABASE_HOST" default:"postgres://postgres:secret@localhost:5432/purchase?sslmode=disable"`
+}
 
+type Config struct {
+	ApplicationVersion string
+	Server             Server
+	Database           Database
+}
 
-func InitConfig(ctx context.Context) {
+func InitConfig(ctx context.Context) *Config {
+	conf := &Config{}
 	_ = godotenv.Load()
 
-	if err := envconfig.Process("", &Configuration); err != nil {
-		log.WithError(err).
-		Error("Error loading .env file")
+	err := envconfig.Process("", conf)
+	if err != nil {
+		log.WithError(err).Panic("Error loading .env file")
 	}
 
-	log.WithField("Config", Configuration).
-	Info("Success on loading .env file")
+	log.WithField("Config", conf).
+		Info("Success on loading .env file")
+
+	return conf
 
 }
