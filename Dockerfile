@@ -1,12 +1,10 @@
 FROM golang:1.19 AS builder
 
-RUN mkdir -p $GOPATH/src/github.com/kevinsantana/purchase
+WORKDIR /app
 
-COPY go.mod $GOPATH/src/github.com/kevinsantana/purchase/
-COPY go.sum $GOPATH/src/github.com/kevinsantana/purchase/
-COPY . $GOPATH/src/github.com/kevinsantana/purchase/
+COPY . /app
 
-RUN go build -o $GOPATH/bin/purchase $GOPATH/src/github.com/kevinsantana/purchase/
+RUN CGO_ENABLED=0 GOOS=linux go build -o wex-coding-challenge main.go
 
 
 FROM alpine:latest
@@ -17,12 +15,10 @@ RUN apk --update upgrade && \
     apk add tzdata && \
     rm -rf /var/cache/apk/*
 
+WORKDIR /app
+
+COPY --from=builder /app/wex-coding-challenge ./
+
 EXPOSE 3060
 
-COPY --from=builder /go/src/github.com/kevinsantana/purchase/ /bin/purchase/
-
-COPY --from=builder /go/bin/purchase /bin/
-
-WORKDIR /bin
-
-CMD ["purchase", "run"]
+CMD ["./wex-coding-challenge", "api"]

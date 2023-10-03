@@ -5,10 +5,10 @@ SHELL=/bin/bash
 
 all: help
 
-up:
+up: ## up: spin-up docker-compose containers.
 	docker-compose up -d
 
-down:
+down: ## down: Stop docker-compose containers..
 	docker-compose down
 
 lint: ## lint: Apply golint.
@@ -20,8 +20,8 @@ help: ## help: Show this help message.
 	@echo "targets:"
 	@grep -Eh '^.+:(\w+)?\ ##\ .+' ${MAKEFILE_LIST} | cut -d ' ' -f '3-' |  column -t -s ':' | egrep --color '^[^ ]*'
 
-build:
+build: ## build: Build go executable
 	go build .
 
-run:
+run: ## run: run purchase api
 	go run . api

@@ -8,6 +8,7 @@ import (
 
 	"github.com/kevinsantana/wex-coding-challenge/internal/config"
 	"github.com/kevinsantana/wex-coding-challenge/internal/share"
+	_ "github.com/lib/pq"
 )
 
 type Database struct {
@@ -17,7 +18,7 @@ type Database struct {
 func Connect(ctx context.Context, cfg *config.Config) *sql.DB {
 	var err error
 
-	db, err := sql.Open("nrpostgres", cfg.Database.Host)
+	db, err := sql.Open("postgres", cfg.Database.Host)
 
 	if err != nil {
 		log.Panicf("connecting postgres: %+v", err)
@@ -52,6 +53,8 @@ func (m Database) Close() error {
 
 		return share.ErrDatabase
 	}
+
+	log.Info("database connection closed")
 
 	return nil
 }
