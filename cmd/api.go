@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/kevinsantana/wex-coding-challenge/pkg/version"
 	envconfig "github.com/kevinsantana/wex-coding-challenge/internal/config"
-	"github.com/kevinsantana/wex-coding-challenge/internal/server"
 	"github.com/kevinsantana/wex-coding-challenge/internal/infra/database"
+	"github.com/kevinsantana/wex-coding-challenge/internal/server"
+	"github.com/kevinsantana/wex-coding-challenge/pkg/version"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ var apiCmd = &cobra.Command{
 		db := database.InitDb(ctx, conf)
 		server.Run(ctx, server.HttpConfig{
 			Cfg: conf,
-			Db: db,
+			Db:  db,
 		})
 	},
 }

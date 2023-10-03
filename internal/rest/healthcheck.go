@@ -3,7 +3,6 @@ package rest
 import (
 	"net/http"
 
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/kevinsantana/wex-coding-challenge/internal/infra/database"
 	log "github.com/sirupsen/logrus"

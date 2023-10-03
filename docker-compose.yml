@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - 3060:3060
+    volumes:
+      - .:/go
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: [ "/go/purchase", "api" ]
+    environment:
+      - DATABASE_HOST=user='postgres' dbname='purchase' host='postgres' password='secret' port='5432' sslmode='disable'
+      - HOST=0.0.0.0
+  postgres:
+    image: postgres:14.2-alpine
+    environment:
+      - POSTGRES_DB=purchase
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db/:/tmp/database/
+      - ./db/initdb-postgres.sql:/docker-entrypoint-initdb.d/initdb-postgres.sql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-q",
+          "-d",
+          "purchase",
+          "-U",
+          "postgres"
+        ]
+      timeout: 20s
+      interval: 2s
+      retries: 10

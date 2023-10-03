@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
