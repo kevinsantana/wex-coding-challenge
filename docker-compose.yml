@@ -2,7 +2,6 @@ version: "3.8"
 services:
   app:
     container_name: wex
-    image: purchase:0.1.0
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,6 +11,7 @@ services:
       - .:/app
     networks:
       - wex-network
+    work_dir: /app
     depends_on:
       db_wex:
         condition: service_healthy
