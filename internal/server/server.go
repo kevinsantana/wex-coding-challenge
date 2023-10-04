@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"net"
 	"net/http"
 	"os"
@@ -11,34 +12,55 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/kevinsantana/wex-coding-challenge/internal/config"
+	"github.com/kevinsantana/wex-coding-challenge/internal/infra/database"
+	"github.com/kevinsantana/wex-coding-challenge/internal/rest"
 )
 
-func Run() {
+type HttpConfig struct {
+	Cfg *config.Config
+	Db  *database.Database
+}
 
-	r := Router()
+func Run(ctx context.Context, c HttpConfig) {
+	health := rest.InitializeHealthWeb(c.Db)
+	r := Router(health)
 
-	ListenAndServe(r)
+	ListenAndServe(ctx, r, c.Cfg)
 }
 
 // ListenAndServe starts http server and handles graceful shutdown
-func ListenAndServe(srv *fiber.App) {
+func ListenAndServe(ctx context.Context, srv *fiber.App, conf *config.Config) {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
+	srvHost := net.JoinHostPort(conf.Server.Host, conf.Server.Port)
 
 	go func() {
-		<-done
-		log.Info("Gracefully shutting down...")
+		log.WithField("host", conf.Server.Host).
+			WithField("port", conf.Server.Port).
+			Info("WEX TAG and Gateways Product server started")
 
-		_ = srv.Shutdown()
+		if err := srv.Listen(srvHost); err != nil && err != http.ErrServerClosed {
+			log.WithError(err).
+				Panicf("server error")
+		}
 	}()
 
-	log.WithField("host", config.Configuration.Host).
-		WithField("port", config.Configuration.Port).
-		Info("WEX TAG and Gateways Product server started")
+	<-done
 
-	srvHost := net.JoinHostPort(config.Configuration.Host, config.Configuration.Port)
+	log.Info("Gracefully shutting down...")
 
-	if err := srv.Listen(srvHost); err != nil && err != http.ErrServerClosed {
-		log.Panicf("server error: %v", err)
+	ctx, cancel := context.WithTimeout(ctx, conf.Server.ShutdownTimeout)
+
+	if err := srv.ShutdownWithContext(ctx); err != nil {
+		log.WithError(err).Error("Server shutdown failed")
 	}
+
+	cancel()
+
+	log.Info("Disconnecting other services")
+
+	// disconnect database open connections
+
+	log.Info("Server exited")
+
 }

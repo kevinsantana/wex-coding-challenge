@@ -21,24 +21,24 @@ type Route struct {
 	Scopes      []string
 }
 
-var healthCheck = Routes{
-	{
-		Name:        "Healthcheck",
-		Method:      http.MethodGet,
-		Pattern:     "/healthcheck",
-		HandlerFunc: rest.Liveness,
-		Public:      true,
-	},
-	{
-		Name:        "Readiness",
-		Method:      http.MethodGet,
-		Pattern:     "/readiness",
-		HandlerFunc: rest.Readiness,
-		Public:      true,
-	},
-}
+func Router(health rest.HealthWebHandler) *fiber.App {
+	var healthCheck = Routes{
+		{
+			Name:        "Healthcheck",
+			Method:      http.MethodGet,
+			Pattern:     "/healthcheck",
+			HandlerFunc: health.Liveness,
+			Public:      true,
+		},
+		{
+			Name:        "Readiness",
+			Method:      http.MethodGet,
+			Pattern:     "/readiness",
+			HandlerFunc: health.Readiness,
+			Public:      true,
+		},
+	}
 
-func Router() *fiber.App {
 	r := fiber.New(fiber.Config{
 		Prefork:               false,
 		CaseSensitive:         false,

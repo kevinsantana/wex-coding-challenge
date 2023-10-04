@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS purchase;
+
+CREATE DATABASE purchase;

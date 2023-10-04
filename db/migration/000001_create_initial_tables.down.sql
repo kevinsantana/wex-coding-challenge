@@ -1,0 +1,1 @@
+DROPE TABLE IF EXISTS purchase_transaction
