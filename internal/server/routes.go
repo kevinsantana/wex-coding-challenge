@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/kevinsantana/wex-coding-challenge/internal/rest"
+	"github.com/kevinsantana/wex-coding-challenge/internal/rest/handlers"
 	"github.com/kevinsantana/wex-coding-challenge/internal/rest/middlewares"
 )
 
@@ -21,7 +22,7 @@ type Route struct {
 	Scopes      []string
 }
 
-func Router(health rest.HealthWebHandler) *fiber.App {
+func Router(health rest.HealthWebHandler, purchase handlers.PurchaseHandler) *fiber.App {
 	var healthCheck = Routes{
 		{
 			Name:        "Healthcheck",
@@ -35,6 +36,16 @@ func Router(health rest.HealthWebHandler) *fiber.App {
 			Method:      http.MethodGet,
 			Pattern:     "/readiness",
 			HandlerFunc: health.Readiness,
+			Public:      true,
+		},
+	}
+
+	var purchaseTransaction = Routes{
+		{
+			Name:        "Create Purchase Transaction",
+			Method:      http.MethodPost,
+			Pattern:     "/purchase",
+			HandlerFunc: purchase.CreatePurchase,
 			Public:      true,
 		},
 	}
@@ -60,6 +71,7 @@ func Router(health rest.HealthWebHandler) *fiber.App {
 	v1 := api.Group("/api/v1")
 
 	var routes []Route
+	routes = append(routes, purchaseTransaction...)
 
 	for _, route := range routes {
 		v1.Add(route.Method, route.Pattern, route.HandlerFunc)
