@@ -67,7 +67,7 @@ func New(db *sql.DB) *Database { //nolint
 
 func InitDb(ctx context.Context, cfg *config.Config) *Database {
 	db := Connect(ctx, cfg)
-	RunMigrations(ctx, db)
+	RunMigrations(ctx, db, cfg)
 
 	return New(db)
 }

@@ -10,7 +10,7 @@ import (
 )
 
 type Server struct {
-	Host            string        `envconfig:"HOST" default:"127.0.0.1"`
+	Host            string        `envconfig:"HOST" default:"0.0.0.0"`
 	Port            string        `envconfig:"PORT" default:"3060"`
 	ShutdownTimeout time.Duration `envconfig:"SHUTDOWN_TIMEOUT" default:"10s"`
 }
@@ -20,6 +20,7 @@ type Database struct {
 	MaxOpenConns    int           `envconfig:"DATABASE_MAXOPENCONNS" default:"25"`
 	MaxIdleConns    int           `envconfig:"DATABASE_MAXIDLECONNS" default:"25"`
 	Host            string        `envconfig:"DATABASE_HOST" default:"postgres://postgres:secret@postgres:5432/purchase?sslmode=disable"`
+	Migrate         bool          `envconfig:"DATABASE_MIGRATE" default:"true"`
 }
 
 type Config struct {

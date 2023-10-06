@@ -12,9 +12,11 @@ var (
 	ErrUpdateNoneOrMany = errors.New("error in quantity of rows affected")
 	ErrDatabase         = errors.New("error database")
 	ErrDuplicate        = errors.New("error duplicate")
+	ErrOrderNotCreated  = errors.New("purchase not created, please try again")
 	// rest
 	ErrTimeout     = errors.New("error timeout")
 	ErrContentType = errors.New("content-type error")
+	ErrValidation  = errors.New("validation error")
 )
 
 type DomainError struct {

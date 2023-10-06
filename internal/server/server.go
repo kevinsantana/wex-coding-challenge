@@ -12,8 +12,10 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/kevinsantana/wex-coding-challenge/internal/config"
+	"github.com/kevinsantana/wex-coding-challenge/internal/core/modules"
 	"github.com/kevinsantana/wex-coding-challenge/internal/infra/database"
 	"github.com/kevinsantana/wex-coding-challenge/internal/rest"
+	"github.com/kevinsantana/wex-coding-challenge/internal/rest/handlers"
 )
 
 type HttpConfig struct {
@@ -23,7 +25,9 @@ type HttpConfig struct {
 
 func Run(ctx context.Context, c HttpConfig) {
 	health := rest.InitializeHealthWeb(c.Db)
-	r := Router(health)
+	core := modules.NewPurchaseCore(database.NewDBPurchase(c.Db), c.Db)
+	purchase := handlers.InitializePurchaseWebHanlder(core)
+	r := Router(health, purchase)
 
 	ListenAndServe(ctx, r, c.Cfg)
 }
