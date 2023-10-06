@@ -17,7 +17,7 @@ RUN apk --update upgrade && \
 
 WORKDIR /app
 
-COPY --from=builder /app/wex-coding-challenge ./
+COPY --from=builder /app/ ./
 
 EXPOSE 3060
 

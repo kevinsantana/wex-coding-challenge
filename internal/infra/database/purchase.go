@@ -55,23 +55,23 @@ func (t TxOrderAdapter) End() error {
 }
 
 func (t TxOrderAdapter) SavePurchase(ctx context.Context, purchase domain.Purchase) (domain.Purchase, error) {
-	sqlStmt := `
-	INSERT INTO purchase_transaction (
-		description,
-		transaction_date,
-		purchase_amount,
-	) VALUES ($1, $2, $3)
-	`
+	sqlStmt := `INSERT INTO purchase_transaction (description, transaction_date, purchase_amount) VALUES ($1, $2, $3) RETURNING id;`
+
+	var lastId int64
+	var args []interface{}
+
 	purchase.CreatedTime = utils.GetCurrentDate()
-	_, err := t.tx.ExecContext(ctx, sqlStmt,
-		purchase.Description,
-		purchase.CreatedTime,
-		purchase.Amount)
+
+	args = append(args, purchase.Description)
+	args = append(args, purchase.CreatedTime)
+	args = append(args, purchase.Amount)
+
+	rows, err := t.tx.QueryContext(ctx, sqlStmt, args...)
 
 	var pqerr *pq.Error
 
 	if err != nil {
-		log.WithError(err).Error("error save order")
+		log.WithError(err).Error("error to save purchase transaction")
 
 		if errors.As(err, &pqerr) && err.(*pq.Error).Code == "23505" {
 			return domain.Purchase{}, share.ErrDuplicate
@@ -79,6 +79,19 @@ func (t TxOrderAdapter) SavePurchase(ctx context.Context, purchase domain.Purcha
 
 		return domain.Purchase{}, share.ErrDatabase
 	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&lastId)
+		
+		if err != nil {
+            log.WithError(err).Error("error to retrieve id")
+        }
+
+	}
+
+	purchase.PurchaseId = lastId
 
 	return purchase, nil
 }

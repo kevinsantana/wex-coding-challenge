@@ -1,1 +1,1 @@
-DROPE TABLE IF EXISTS purchase_transaction
+DROP TABLE IF EXISTS purchase_transaction;

@@ -41,7 +41,7 @@ func (c PurchaseCore) Create(ctx context.Context, purchase domain.Purchase) (sav
 
 		// TODO: return already created purchase transaction
 
-		log.WithError(err).Error("error create order into db")
+		log.WithError(err).Error("error to create purchase transaction into db")
 
 		return domain.Purchase{}, share.ErrOrderNotCreated
 	}
