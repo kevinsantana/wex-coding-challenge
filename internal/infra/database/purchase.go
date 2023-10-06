@@ -84,10 +84,10 @@ func (t TxOrderAdapter) SavePurchase(ctx context.Context, purchase domain.Purcha
 
 	for rows.Next() {
 		err = rows.Scan(&lastId)
-		
+
 		if err != nil {
-            log.WithError(err).Error("error to retrieve id")
-        }
+			log.WithError(err).Error("error to retrieve id")
+		}
 
 	}
 

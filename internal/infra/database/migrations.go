@@ -2,13 +2,13 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"database/sql"
+	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/kevinsantana/wex-coding-challenge/internal/config"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/kevinsantana/wex-coding-challenge/internal/config"
 	log "github.com/sirupsen/logrus"
 )
 

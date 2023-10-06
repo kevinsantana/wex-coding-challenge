@@ -5,6 +5,9 @@ SHELL=/bin/bash
 
 all: help
 
+envvars:
+	export $(grep -v '^#' .env | xargs)
+
 docker-build: ## docker-build: build the local image
 	docker build --force-rm --tag purchase:0.1.0 .
 

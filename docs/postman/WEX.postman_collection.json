@@ -1,0 +1,85 @@
+{
+	"info": {
+		"_postman_id": "4977f356-37a5-421f-b7c9-292993424759",
+		"name": "WEX",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30195643"
+	},
+	"item": [
+		{
+			"name": "healthz",
+			"item": [
+				{
+					"name": "Healthcheck",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3060/healthcheck",
+							"host": [
+								"localhost"
+							],
+							"port": "3060",
+							"path": [
+								"healthcheck"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Readiness",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3060/readiness",
+							"host": [
+								"localhost"
+							],
+							"port": "3060",
+							"path": [
+								"readiness"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Purchase Transaction",
+			"item": [
+				{
+					"name": "create purchase transaction",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"new purchase test\",\n    \"amount\": 89.9999\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3060/api/v1/purchase",
+							"host": [
+								"localhost"
+							],
+							"port": "3060",
+							"path": [
+								"api",
+								"v1",
+								"purchase"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
