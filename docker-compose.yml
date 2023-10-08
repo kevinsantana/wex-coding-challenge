@@ -1,36 +1,17 @@
 version: "3.8"
-services:
-  app:
-    container_name: wex
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 3060:3060
-    volumes:
-      - .:/app
-    networks:
-      - wex-network
-    working_dir: /app
-    depends_on:
-      db_wex:
-        condition: service_healthy
-    environment:
-      - DATABASE_HOST=postgres://postgres:secret@db_wex:5432/purchase?sslmode=disable
-      - HOST=0.0.0.0
-  
+services:  
   db_wex:
     container_name: db_wex
     image: postgres:14.2-alpine
     restart: always
     environment:
-      - POSTGRES_DB=purchase
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_USER=postgres
+      POSTGRES_DB: purchase
+      POSTGRES_PASSWORD: secret
+      POSTGRES_USER: postgres
     ports:
       - 5432:5432
     volumes:
-      - vdb_wex:/var/lib/postgresql/data/
+      - postgres:/var/lib/postgresql/data
       - ./db/initdb-postgres.sql:/docker-entrypoint-initdb.d/initdb-postgres.sql
     networks:
       - wex-network
@@ -55,4 +36,5 @@ networks:
     driver: bridge
 
 volumes:
-    vdb_wex:
+  postgres:
+    driver: local

@@ -1,24 +1,28 @@
-FROM golang:1.19 AS builder
+FROM golang:1.19-alpine AS builder
+
+RUN apk --update upgrade && \
+    apk add build-base gcc sqlite && \
+    apk add --no-cache libc6-compat && \
+    rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
 COPY . /app
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o wex-coding-challenge main.go
-
+RUN CC=gcc CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o wex main.go
 
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
-
 RUN apk --update upgrade && \
-    apk add tzdata && \
+    apk --no-cache add ca-certificates && \
     rm -rf /var/cache/apk/*
-
-WORKDIR /app
-
-COPY --from=builder /app/ ./
 
 EXPOSE 3060
 
-CMD ["./wex-coding-challenge", "api"]
+COPY --from=builder /app/ /app
+
+ENV DATABASE_HOST=postgres://postgres:secret@db_wex:5432/purchase?sslmode=disable 
+
+WORKDIR /app
+
+CMD ["./wex", "api"]

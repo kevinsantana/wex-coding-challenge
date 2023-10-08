@@ -9,10 +9,14 @@ envvars:
 	export $(grep -v '^#' .env | xargs)
 
 docker-build: ## docker-build: build the local image
-	docker build --force-rm --tag purchase:0.1.0 .
+	docker build --force-rm --tag wex:0.1.0 .
 
 docker-run: ## docker-run: run the local container
-	docker run --name purchase --network wex -p 3060:3060 purchase:0.1.0
+	docker run --name wex --network wex-network -p 3060:3060 wex:0.1.0
+
+docker: ## docker: build and run
+	make docker-build
+	make docker-run
 
 docker-postgres: ## docker-postgres: run local postgres
 	docker run --name postgres --network wex -p 5432:5432 -d -e POSTGRES_PASSWORD=secret -e POSTGRES_USER=postgres -e POSTGRES_DB=purchase postgres:14.2-alpine
